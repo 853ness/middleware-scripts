@@ -1,43 +1,31 @@
-#!bin/bash
-
-#Author : Lynn
-#Date: 6-19-2022
-
-
-if
-[ $UID -ne 1000 ]
-
-then
-echo" You must be in vargant to run this"
-exit 2
-fi
-
-#Java installation
 sudo yum update -y
-sudo yum install java-11-openjdk-devel -y
+sudo yum install java-11-openjdk-devel* -y
 sudo yum install java-11-openjdk -y
 
-#Download SonarQube
-echo "check to make sure that tou have wget downloaded, if not download wget"
-sleep 3
+if
+[ $? -ne 0 ]
+then echo "You failed to install java"
+echo "please try again"
+exit 1
+fi
 
 sudo yum install wget -y
-sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.3.0.51899.zip
 
-#Extract packages
-sudo unzip /opt/sonarqube-9.3.0.51899.zip
 
-#connect to SonarQube
-sudo systemctl start firewalld
-sudo firewall-cmd --permanent --add-port=9000/tcp
-sudo firewall-cmd --reload
+##================> installing sonaqube <===============
+sudo yum install unzip
+sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.3.0.51899.zip -P /opt
+sudo unzip /opt/sonarqube-9.3.0.51899.zip -d /opt
 
-echo "open your browser and input your ip address in this format- http://<your-ip-address>:9000"
-echo "This is the username and password for sonaqube"
-echo "Displaying the username"
-sleep 2
-echo "Login: admin"
-sleep 2
-echo "displaying the password"
-sleep 2
-echo "password: admin"
+##=============> Adjusting the user permission <========
+
+sudo chown -R $USER:$USER /opt/sonarqube-9.3.0.51899
+sudo sed -i 's/#RUN_AS_USER=/RUN_AS_USER=$USER/g' /opt/sonarqube-9.3.0.51899/bin/linux-x86-64/sonar.sh
+sudo chmod +x /opt/sonarqube-9.3.0.51899/bin/linux-x86-64/sonar.sh
+sudo /opt/sonarqube-9.3.0.51899/bin/linux-x86-64/sonar.sh start
+sudo /opt/sonarqube-9.3.0.51899/bin/linux-x86-64/sonar.sh status
+##===========> In case you need to adjust your firewall<=============
+
+#systmectl start firewalld
+#sudo firewall-cmd --permanent --add-port=9000/tcp
+#sudo firewall-cmd
