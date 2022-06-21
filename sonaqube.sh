@@ -26,6 +26,6 @@ sudo /opt/sonarqube-9.3.0.51899/bin/linux-x86-64/sonar.sh start
 sudo /opt/sonarqube-9.3.0.51899/bin/linux-x86-64/sonar.sh status
 ##===========> In case you need to adjust your firewall<=============
 
-#systmectl start firewalld
+#sudo systmectl start firewalld
 #sudo firewall-cmd --permanent --add-port=9000/tcp
-#sudo firewall-cmd
+#sudo firewall-cmd --reload
